@@ -1,0 +1,84 @@
+:PROPERTIES:
+:ID:       39e29c83-78ff-4354-99ee-59ec0aad9f7c
+:ROAM_REFS: https://leetcode.com/problems/find-the-town-judge/
+:END:
+#+TITLE: 997. Find the Town Judge
+#+filetags: :Easy:
+
+* 问题
+In a town, there are =n= people labeled from =1= to =n=. There is a rumor that one of these people is secretly the town judge.
+
+If the town judge exists, then:
+1. The town judge trusts nobody.
+2. Everybody (except for the town judge) trusts the town judge.
+3. There is exactly one person that satisfies properties *1* and *2*.
+
+You are given an array =trust= where ~trust[i] = [ai, bi]~ representing that the person labeled =ai= trusts the person labeled =bi=.
+
+Return the label of the /town judge if the town judge exists and can be identified, or return =-1= otherwise/.
+
+
+#+BEGIN_SRC
+Example 1:
+
+Input: n = 2, trust = [[1,2]]
+Output: 2
+#+END_SRC
+
+#+BEGIN_SRC
+Example 2:
+
+Input: n = 3, trust = [[1,3],[2,3]]
+Output: 3
+#+END_SRC
+
+#+BEGIN_SRC
+Example 3:
+
+Input: n = 3, trust = [[1,3],[2,3],[3,1]]
+Output: -1
+#+END_SRC
+
+
+Constraints:
+- ~1 <= n <= 1000~
+- ~0 <= trust.length <= 104~
+- ~trust[i].length == 2~
+- All the pairs of ~trust~ are *unique*.
+- ~ai != bi~
+- ~1 <= ai, bi <= n~
+
+
+* 思路
+这题尽管是 easy 难度, 但我认为比昨天的 medium 难度还要难想一点.
+
+题目很简单, 给一对 pair =[a, b]=, 代表 a 相信 b
+
+同时所有人(除了 judge)都相信 judge, 而 judge 不相信任何人
+
+这表明相信 judge 的个数必须为 n - 1, 同时 judge 相信的数量为 0
+
+** 想法1
+我一开始的想法是使用两个数组, 一个记录人们被相信的数量(n-1), 另一个记录人们相信他人的数量(0)
+
+** 想法2
+从别人的代码中我了解到: 可以使用 *[[id:21389bfb-0dc9-427b-8061-19e577776a7f][图]]的度* 来进行表示, a 相信 b 可以用 a 的出度 +1, b 的入度 +1 的方式表示, 最终要求 judge 的入度为 n - 1, 同时出度为 0.
+
+出度和入度可以合并为 -1 和 +1, 因此 a 相信 b 可以用 =a--=, =b++= 来表示
+
+* 代码
+#+begin_src go
+func findJudge(n int, trust [][]int) int {
+    degrees := make([]int, n+1, n+1)
+    for _, pair := range trust {
+        degrees[pair[0]]--
+        degrees[pair[1]]++
+    }
+    for i:=1;i<=n;i++{
+        if degrees[i]==n-1{
+            return i
+        }
+    }
+    return -1
+}
+#+end_src
