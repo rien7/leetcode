@@ -10,8 +10,6 @@ You are given a list of songs where the =ith= song has a duration of =time[i]= s
 
 Return the number of pairs of songs for which their total duration in seconds is divisible by =60=. Formally, we want the number of indices =i=, =j= such that =i < j= with ~(time[i] + time[j]) % 60 == 0~.
 
-
-
 Example 1:
 #+BEGIN_SRC
 Input: time = [30,20,150,100,40]
@@ -36,7 +34,7 @@ Constraints:
 * 思路
 本题的想法比较简单, 一是暴力破解, 设置两个循环遍历整个数组. 但这么做的时间复杂度来到了 =O(n^2)=, 不是最优解.
 
-可以注意到, 两个数要加起来的和为 60 的倍数, 那么可以使用 ~time[i] % 60~ 的方法, 只留下真正能够影响结果的部分. 仔细一想即可知道, 假设余数为 5 的数字要和其他数字的和为 60 的倍数, 那么这个数的余数必为 55, 这两组数可能发生的组合个数为 ~i * j~.
+可以注意到, 两个数要加起来的和为 60 的倍数, 那么可以使用 ~time[i] % 60~ 的方法, 即[[id:048d8e50-98bb-4017-9d39-ae1fa5ce09af][哈希表]]的方法, 只留下真正能够影响结果的部分. 仔细一想即可知道, 假设余数为 5 的数字要和其他数字的和为 60 的倍数, 那么这个数的余数必为 55, 这两组数可能发生的组合个数为 ~i * j~.
 
 还需要留意两个特殊情况, 即 0 和 30. 这两组数都只能和自身组合, 并且由于不能重复以及不能和自身组合, 因此这两组数的组合个数都是 ~i * (i-1) / 2~ (等差数列求和)
 
