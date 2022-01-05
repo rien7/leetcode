@@ -1,0 +1,98 @@
+:PROPERTIES:
+:ID:       cac20b74-7b2f-4491-aea0-e53c7d5d5d60
+:ROAM_REFS: https://leetcode.com/problems/palindrome-partitioning/
+:END:
+#+title: 131. Palindrome Partitioning
+#+filetags: :Medium:
+
+* 问题
+Given a string ~s~, partition ~s~ such that every substring of the partition is a *palindrome*. Return all possible palindrome partitioning of ~s~.
+
+A *palindrome* string is a string that reads the same backward as forward.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: s = "aab"
+Output: [["a","a","b"],["aa","b"]]
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: s = "a"
+Output: [["a"]]
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= s.length <= 16~
+- ~s~ contains only lowercase English letters.
+
+* 思路
+这题的主要思路为 [[id:2682fb11-5b6e-4075-be43-f6c615f3a0f1][dfs]].
+
+结束条件为遍历到字符串末尾.
+
+从 start 开始遍历子字符串 [end].
+若该子字符串为回文, 则[[id:b6778104-2755-4aef-8134-856c2ccbdb31][递归]]的判断子字符串 [end+1:].
+否则 end++
+
+例如: xxyxx 这一字符串, 从 0 开始, end = 0
+
+#+BEGIN_SRC
+x 为回文, 递归判断 xyxx
+    x 为回文, 递归判断 yxx
+        y 为回文, 递归判断 xx
+            x 为回文, 递归判断 x
+                x 为回文, 抵达字符串末尾, 添加 [x, x, y, x, x] 到结果
+            xx 为回文, 抵达字符串末尾, 添加 [x, x, y, xx] 到结果
+        yx 不为回文, 继续循环
+        yxx 不为回文, 抵达字符串末尾
+    xy 不为回文, 继续循环
+    xyx 为回文, 递归判断 x
+        x 为回文, 抵达字符串末尾, 添加 [x, xyx, x] 到结果
+xx 为回文, 递归判断 yxx
+    y 为回文, 递归判断 xx
+        x 为回文, 递归判断 x
+            x 为回文, 抵达字符串末尾, 添加 [xx, y, x, x] 到结果
+        xx 为回文, 抵达字符串末尾, 添加 [xx, y, xx] 到结果
+    yx 不为回文, 继续循环
+    yxx 不为回文, 抵达字符串末尾
+xxy 不为回文, 继续循环
+xxyx 不为回文, 继续循环
+xxyxx 为回文, 抵达字符串末尾, 添加 [xxyxx] 到结果
+#+END_SRC
+
+* 代码
+#+BEGIN_SRC go
+func partition(s string) [][]string {
+    res := make([][]string, 0)
+    cur := make([]string, 0)
+    dfs(0, s, &cur, &res)
+    return res
+}
+​
+func dfs(start int, s string, cur *[]string, res *[][]string) {
+    n := len(s)
+    if start >= n {
+        *res = append(*res, append([]string{}, *cur...))
+        return
+    }
+    for end := start; end < n; end++ {
+        if isPalindrome(s[start : end + 1], end + 1 - start) {
+            *cur = append(*cur, s[start : end + 1])
+            dfs(end + 1, s, cur, res)
+            *cur = (*cur)[:len(*cur)-1]
+        }
+    }
+}
+​
+func isPalindrome(s string, n int) bool {
+    for i := 0; i < n; i++ {
+        if s[i] != s[n-1-i] { return false }
+    }
+    return true
+}
+​
+#+END_SRC
