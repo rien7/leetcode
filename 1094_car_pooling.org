@@ -1,0 +1,89 @@
+:PROPERTIES:
+:ID:       eb040d3a-e421-4acf-915e-07bdae0b625a
+:ROAM_REFS: https://leetcode.com/problems/car-pooling/
+:END:
+#+title: 1094. Car Pooling
+#+filetags: :Medium:
+
+* 问题
+There is a car with ~capacity~ empty seats. The vehicle only drives east (i.e., it cannot turn around and drive west).
+
+You are given the integer ~capacity~ and an array ~trips~ where ~trip[i] = [numPassengers_{i}, from_{i}, to_{i}]~ indicates that the ~i^{th}~ trip has ~numPassengers_{i}~ passengers and the locations to pick them up and drop them off are ~from_{i}~ and ~to_{i}~ respectively. The locations are given as the number of kilometers due east from the car's initial location.
+
+Return ~true~ /if it is possible to pick up and drop off all passengers for all the given trips, or/ ~false~ /otherwise/.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: trips = [[2,1,5],[3,3,7]], capacity = 4
+Output: false
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: trips = [[2,1,5],[3,3,7]], capacity = 5
+Output: true
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= trips.length <= 1000~
+- ~trips[i].length == 3~
+- ~1 <= numPassengers_{i} <= 100~
+- ~0 <= from_{i} < to_{i} <= 1000~
+- ~1 <= capacity <= 10^{5}~
+
+* 思路
+本题的思路有两种
+
+** 思路1
+我做的这种, 创建一个列表, 将每个下标的乘客数记录下来, 并顺便判断是否超载
+
+** 思路2
+只是将二维数组展开到一维, 再遍历整个数组, 判断其是否超载
+
+** 优化
+由于题目设置了下标在[0,1000]之间, 因此可以固定数组长度, 而不需要像我一样每次都判断后再增加
+
+* 代码
+#+BEGIN_SRC go
+// 思路1
+func carPooling(trips [][]int, capacity int) bool {
+    cap := make([]int, 0)
+    for _, trip := range trips {
+        n := len(cap)
+        if n <= trip[2] {
+            cap = append(cap, make([]int, trip[2] + 1 - n)...)
+        }
+        // drop passengers at trip[2]
+        for i := trip[1]; i < trip[2]; i++ {
+            cap[i] += trip[0]
+            if cap[i] > capacity {
+                return false
+            }
+        }
+    }
+    return true
+}
+// 思路2
+func carPooling(trips [][]int, capacity int) bool {
+    cap := make([]int, 0)
+    for _, trip := range trips {
+        n := len(cap)
+        if n <= trip[2] {
+            cap = append(cap, make([]int, trip[2] + 1 - n)...)
+        }
+        cap[trip[1]] += trip[0]
+        cap[trip[2]] -= trip[0]
+    }
+    sum := 0
+    for _, c := range cap {
+        sum += c
+        if sum > capacity {
+            return false
+        }
+    }
+    return true
+}
+#+END_SRC
