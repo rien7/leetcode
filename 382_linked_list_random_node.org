@@ -1,0 +1,96 @@
+:PROPERTIES:
+:ID:       d401d7ee-64ef-461c-a300-b30ca4eb8876
+:ROAM_REFS: https://leetcode.com/problems/linked-list-random-node/
+:END:
+#+title: 382. Linked List Random Node
+#+filetags: :Medium:
+
+* 问题
+Given a singly linked list, return a random node's value from the linked list. Each node must have the *same probability* of being chosen.
+
+Implement the ~Solution~ class:
+
+- ~Solution(ListNode head)~ Initializes the object with the integer array nums.
+- ~int getRandom()~ Chooses a node randomly from the list and returns its value. All the nodes of the list should be equally likely to be choosen.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2021/03/16/getrand-linked-list.jpg]]
+#+BEGIN_SRC
+Input
+["Solution", "getRandom", "getRandom", "getRandom", "getRandom", "getRandom"]
+[[[1, 2, 3]], [], [], [], [], []]
+Output
+[null, 1, 3, 2, 2, 3]
+
+Explanation
+Solution solution = new Solution([1, 2, 3]);
+solution.getRandom(); // return 1
+solution.getRandom(); // return 3
+solution.getRandom(); // return 2
+solution.getRandom(); // return 2
+solution.getRandom(); // return 3
+// getRandom() should return either 1, 2, or 3 randomly. Each element should have equal probability of returning.
+#+END_SRC
+
+*Constraints:*
+
+- The number of nodes in the linked list will be in the range ~[1, 10^{4}]~.
+- ~-10^{4} <= Node.val <= 10^{4}~
+- At most ~10^{4}~ calls will be made to ~getRandom~.
+
+*Follow up:*
+
+- What if the linked list is extremely large and its length is unknown to you?
+- Could you solve this efficiently without using extra space?
+
+* 思路
+本题的主要难点除了如何根据要求写特定格式的代码以外, 还有就是 *如何在不知道长度的列表中随机抽取数字*
+
+这个算法叫做 =水塘抽样=, 其基本思路为: 第一个数值以 1/1 的概率抽取, 第二个数值以 1/2 的概率抽取, 第三个数值以 1/3 的概率抽取... 以此类推, 这样子能够保证每一个数值的概率都是 1/n
+
+还需要提及的是 go 中的随机数如何使用, 包名为 ="math/rand"=:
+
+- =rand.Int()=: 在 int 的范围中随机抽取
+- =rand.Int(n)=: 在 [0, n) 的范围中随机抽取
+- =rand.Float64()=: 在 [0, 1) 的范围中随机抽取
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+import "math/rand"
+type Solution struct {
+    head *ListNode
+}
+​​
+func Constructor(head *ListNode) Solution {
+    return Solution{head: head}
+}
+​​
+func (this *Solution) GetRandom() int {
+    index := 1
+    res := 0
+    curr := this.head
+    for curr != nil {
+        if (rand.Int() % index == 0) {
+            res = curr.Val
+        }
+        index++
+        curr = curr.Next
+    }
+    return res
+}
+​
+​
+/**
+ * Your Solution object will be instantiated and called as such:
+ * obj := Constructor(head);
+ * param_1 := obj.GetRandom();
+ */
+#+END_SRC
