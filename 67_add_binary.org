@@ -1,0 +1,80 @@
+:PROPERTIES:
+:ID:       f712a1b6-422e-4349-ab76-82f699e98d37
+:ROAM_REFS: https://leetcode.com/problems/add-binary/
+:END:
+#+title: 67. Add Binary
+#+filetags: :Easy:
+
+* 问题
+Given two binary strings ~a~ and ~b~, return /their sum as a binary string/.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: a = "11", b = "1"
+Output: "100"
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: a = "1010", b = "1011"
+Output: "10101"
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= a.length, b.length <= 10^{4}~
+- ~a~ and ~b~ consistonly of ~'0'~ or ~'1'~ characters.
+- Each string does not contain leading zeros except for the zero itself.
+
+* 思路
+这题的思路不难, 只要从最低位开始一个个判断即可.
+
+但实现的方式有几种思路
+
+** 加法
+*** 思路1
+对 ~a=='1'~ && ~b=='1'~, ~a=='0'~ && ~b=='0'~, else 作出判断
+
+*** 思路2
+对 a, b 分别判断后转换成数字相加
+
+** 对长字符串剩余处理
+*** 思路1
+循环短字符串, 再循环长字符串
+
+*** 思路2
+循环长字符串, 判断短字符串
+
+* 代码
+#+BEGIN_SRC go
+func addBinary(a string, b string) string {
+    max := len(a)
+    min := len(b)
+    if max < min {
+        a, b = b, a
+        max, min = min, max
+    }
+
+    temp := 0
+    res := ""
+    for i:= 1; i <= max; i++ {
+        as := 0
+        bs := 0
+        if a[max-i] == '1' { as = 1 }
+        if i <= min && b[min-i] == '1' { bs = 1 }
+        sum := as + bs + temp
+        if sum % 2 == 0 {
+            res = "0" + res
+        } else {
+            res = "1" + res
+        }
+        temp = sum / 2
+    }
+    if temp == 1 {
+        res = "1" + res
+    }
+    return res
+}
+#+END_SRC
