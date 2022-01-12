@@ -1,0 +1,88 @@
+:PROPERTIES:
+:ID:       e29bc363-fc32-4989-8d31-fceff1c11615
+:ROAM_REFS: https://leetcode.com/problems/insert-into-a-binary-search-tree/
+:END:
+#+title: 701. Insert into a Binary Search Tree
+#+filetags: :Medium:
+
+* 问题
+You are given the ~root~ node of a binary search tree (BST) and a ~value~ to insert into the tree. Return /the root node of the BST after the insertion/. It is *guaranteed* that the new value does not exist in the original BST.
+
+*Notice* that there may existmultiple valid ways for theinsertion, as long as the tree remains a BST after insertion. You can return *any of them*.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2020/10/05/insertbst.jpg]]
+#+BEGIN_SRC
+Input: root = [4,2,7,1,3], val = 5
+Output: [4,2,7,1,3,5]
+Explanation: Another accepted tree is:
+[[https://assets.leetcode.com/uploads/2020/10/05/bst.jpg]]
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: root = [40,20,60,10,30,50,70], val = 25
+Output: [40,20,60,10,30,50,70,null,null,25]
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: root = [4,2,7,1,3,null,null,null,null,null,null], val = 5
+Output: [4,2,7,1,3,5]
+#+END_SRC
+
+*Constraints:*
+
+- The number of nodes inthe tree will be in the range ~[0,10^{4}]~.
+- ~-10^{8} <= Node.val <= 10^{8}~
+- All the values ~Node.val~ are *unique*.
+- ~-10^{8} <= val <= 10^{8}~
+- It's *guaranteed* that ~val~ does not exist in the original BST.
+
+* 思路
+本题首先需要知道 [[id:5dc78c1a-2924-4f6c-99f8-100238a76d0a][二叉搜索树]] 的定义: *左子树小于此节点, 右子树大于此节点*
+
+那么, 根据此定义易得插入的逻辑为:
+1. 判断该值与节点值的大小关系
+2. 大于往右子树递归判断, 小于往左子树递归判断
+3. 若该节点为空, 说明可以插入, 直接填充值
+
+** 思路1
+由于需要使用递归, 一开始我用了 =insert(cur *TreeNode, val int)= 这一函数来递归节点.
+
+但这遇到了一个问题: 无法便捷的插入节点. 由于判断的边界条件是该节点为 =nil= 时插入值, 所以无法将插入的值便捷的和上一个子树连接起来.
+
+为了解决这一问题, 我额外定义了 ~var None *TreeNode = &TreeNode{}~ 用于充当 =nil= 的角色, 但这又导致了 ~root == nil~ 时需要进行额外的判断.
+
+** 思路2
+根据他人的代码, 我想到了添加返回值 =*TreeNode=, 并在父节点对子树赋值, 例如: ~cur.Left = insert(cur.Left, val)~
+
+并且这一种方式不需要额外的判断 ~root == nil~ 的情况, 更为方便
+
+** 思路3
+随后发现, 并不需要将 =insert()= 单独拿出来做一个函数, 可以使用 =insertIntoBST()= 直接递归
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func insertIntoBST(root *TreeNode, val int) *TreeNode {
+    if root == nil {
+        root = &TreeNode{ Val: val, }
+    } else if val > root.Val {
+        root.Right = insertIntoBST(root.Right, val)
+    } else {
+        root.Left = insertIntoBST(root.Left, val)
+    }
+    return root
+}
+#+END_SRC
