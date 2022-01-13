@@ -5,7 +5,7 @@
 #+title: 67. Add Binary
 #+filetags: :Easy:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 Given two binary strings ~a~ and ~b~, return /their sum as a binary string/.
 
 *Example 1:*

@@ -5,7 +5,7 @@
 #+title: 701. Insert into a Binary Search Tree
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 You are given the ~root~ node of a binary search tree (BST) and a ~value~ to insert into the tree. Return /the root node of the BST after the insertion/. It is *guaranteed* that the new value does not exist in the original BST.
 
 *Notice* that there may existmultiple valid ways for theinsertion, as long as the tree remains a BST after insertion. You can return *any of them*.

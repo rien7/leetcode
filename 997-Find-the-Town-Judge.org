@@ -5,7 +5,7 @@
 #+TITLE: 997. Find the Town Judge
 #+filetags: :Easy:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 In a town, there are =n= people labeled from =1= to =n=. There is a rumor that one of these people is secretly the town judge.
 
 If the town judge exists, then:

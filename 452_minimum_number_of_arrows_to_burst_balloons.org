@@ -5,7 +5,7 @@
 #+title: 452. Minimum Number of Arrows to Burst Balloons
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 There are some spherical balloons taped onto a flat wall that represents the XY-plane. The balloons are represented as a 2D integer array ~points~ where ~points[i] = [x_{start}, x_{end}]~ denotes a balloon whose *horizontal diameter* stretches between ~x_{start}~ and ~x_{end}~. You do not know the exact y-coordinates of the balloons.
 
 Arrows can be shot up *directly vertically* (in the positive y-direction) from different points along the x-axis. A balloon with ~x_{start}~ and ~x_{end}~ is *burst* by an arrow shot at ~x~ if ~x_{start} <= x <= x_{end}~. There is *no limit* to the number of arrows that can be shot. A shot arrow keeps traveling up infinitely, bursting any balloons in its path.

@@ -5,7 +5,7 @@
 #+title: 382. Linked List Random Node
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 Given a singly linked list, return a random node's value from the linked list. Each node must have the *same probability* of being chosen.
 
 Implement the ~Solution~ class:

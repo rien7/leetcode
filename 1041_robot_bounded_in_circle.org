@@ -5,7 +5,7 @@
 #+title: 1041. Robot Bounded In Circle
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 On an infinite plane, a robot initially stands at ~(0, 0)~ and faces north. The robot can receive one of three instructions:
 
 - ~"G"~: go straight 1 unit;

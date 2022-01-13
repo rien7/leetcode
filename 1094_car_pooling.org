@@ -5,7 +5,7 @@
 #+title: 1094. Car Pooling
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 There is a car with ~capacity~ empty seats. The vehicle only drives east (i.e., it cannot turn around and drive west).
 
 You are given the integer ~capacity~ and an array ~trips~ where ~trip[i] = [numPassengers_{i}, from_{i}, to_{i}]~ indicates that the ~i^{th}~ trip has ~numPassengers_{i}~ passengers and the locations to pick them up and drop them off are ~from_{i}~ and ~to_{i}~ respectively. The locations are given as the number of kilometers due east from the car's initial location.

@@ -5,7 +5,7 @@
 #+TITLE: 1009. Complement of Base 10 Integer
 #+filetags: :Easy:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 The *complement* of an integer is the integer you get when you flip all the =0='s to =1='s and all the =1='s to =0='s in its binary representation.
 
 - For example, The integer =5= is "=101=" in binary and its *complement* is "=010=" which is the integer =2=.

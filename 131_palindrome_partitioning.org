@@ -5,7 +5,7 @@
 #+title: 131. Palindrome Partitioning
 #+filetags: :Medium:
 
-* 问题
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
 Given a string ~s~, partition ~s~ such that every substring of the partition is a *palindrome*. Return all possible palindrome partitioning of ~s~.
 
 A *palindrome* string is a string that reads the same backward as forward.
