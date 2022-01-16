@@ -1,0 +1,83 @@
+:PROPERTIES:
+:ID:       1658b6c1-8bcf-4541-937a-0cf5a5b86862
+:ROAM_REFS: https://leetcode.com/problems/maximize-distance-to-closest-person/submissions/
+:END:
+#+title: 849. Maximize Distance to Closest Person
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+You are given an array representing a row of ~seats~ where ~seats[i] = 1~ represents a person sitting in the ~i^{th}~ seat, and ~seats[i] = 0~ represents that the ~i^{th}~ seat is empty *(0-indexed)*.
+
+There is at least one empty seat, and at least one person sitting.
+
+Alex wants to sit in the seat such that the distance between him and the closest person to him is maximized.
+
+Return /that maximum distance to the closest person/.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2020/09/10/distance.jpg]]
+#+BEGIN_SRC
+Input: seats = [1,0,0,0,1,0,1]
+Output: 2
+Explanation:
+If Alex sits in the second open seat (i.e. seats[2]), then the closest person has distance 2.
+If Alex sits in any other open seat, the closest person has distance 1.
+Thus, the maximum distance to the closest person is 2.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: seats = [1,0,0,0]
+Output: 3
+Explanation:
+If Alex sits in the last seat (i.e. seats[3]), the closest person is 3 seats away.
+This is the maximum distance possible, so the answer is 3.
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: seats = [0,1]
+Output: 1
+#+END_SRC
+
+*Constraints:*
+
+- ~2 <= seats.length <= 2 * 10^{4}~
+- ~seats[i]~ is ~0~ or ~1~.
+- At least one seat is *empty*.
+- At least one seat is *occupied*.
+
+* 思路
+这题一看就是使用[[id:d772036b-0c07-45c4-b86c-ed519f603a00][滑动窗口]]来做, 但麻烦的是怎么处理边界问题.
+
+即边界两端的计算方式和中间的计算方式不同, 因此需要特殊处理.
+
+还值得注意的是, 滑动窗口的边界既可以是上一个0, 也可以是上一个1, 实现方式上有些区别.
+
+* 代码
+#+BEGIN_SRC go
+func maxDistToClosest(seats []int) int {
+    left := -1
+    max := 0
+    for i, seat := range seats {
+        if seat == 0 {
+            if left == -1 { left = i }
+            tempMax := 0
+            if left == 0 || i == len(seats) - 1 {
+                tempMax = i - left + 1
+            } else {
+                tempMax = (i - left) / 2 + 1
+            }
+            if max < tempMax {
+                max = tempMax
+            }
+        } else {
+            left = -1
+        }
+    }
+    return max
+}
+#+END_SRC
