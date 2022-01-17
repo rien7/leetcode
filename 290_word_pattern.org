@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID:       4475379c-c67b-4cf5-b3df-fc4d7612839f
+:ROAM_REFS: https://leetcode.com/problems/word-pattern/
+:END:
+#+title: 290. Word Pattern
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given a ~pattern~ and a string ~s~, find if ~s~ follows the same pattern.
+
+Here *follow* means a full match, such that there is a bijection between a letter in ~pattern~ and a *non-empty* word in ~s~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: pattern = "abba", s = "dog cat cat dog"
+Output: true
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: pattern = "abba", s = "dog cat cat fish"
+Output: false
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: pattern = "aaaa", s = "dog cat cat dog"
+Output: false
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= pattern.length <= 300~
+- ~pattern~ contains only lower-case English letters.
+- ~1 <= s.length <= 3000~
+- ~s~ contains only lowercase English letters and spaces ~' '~.
+- ~s~ *does not contain* any leading or trailing spaces.
+- All the words in ~s~ are separated by a *single space*.
+
+* 思路
+本题的难点仍然在于如何处理边界条件. 题目本身不难, 用一个[[id:048d8e50-98bb-4017-9d39-ae1fa5ce09af][哈希表]]存储映射即可, 但由于题目的要求为一对一的双向映射, 而哈希表只能应对单向映射, 因此需要两个哈希表.
+
+两个哈希表都不存在: 说明这个键未被存储
+其中一个哈希表存在: 说明有一个键存在一对多映射, 返回 =false=
+两个哈希表都存在, 但和当前值不匹配: 说明有一个键存在一对多映射, 返回 =false=
+
+* 代码
+#+BEGIN_SRC go
+import "strings"
+func wordPattern(pattern string, s string) bool {
+    strs := strings.Split(s, " ")
+    if len(strs) != len(pattern) { return false }
+
+    p2w := make(map[byte]string, 0)
+    w2p := make(map[string]byte, 0)
+    for i := range strs {
+        cp, cw := pattern[i], strs[i]
+        w, wok := p2w[cp]
+        p, pok := w2p[cw]
+        if !wok && !pok {
+            p2w[cp], w2p[cw] = cw, cp
+        } else if wok && pok && (w != cw || p != cp) {
+            return false
+        } else if (!wok && pok) || (!pok && wok) {
+            return false
+        }
+    }
+    return true
+}
+#+END_SRC
