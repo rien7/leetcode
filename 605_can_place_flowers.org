@@ -35,7 +35,7 @@ Output: false
 本题有两种解题思路
 
 ** 思路1
-[[id:1658b6c1-8bcf-4541-937a-0cf5a5b86862][849. Maximize Distance to Closest Person]], 和这题一样, 通过滑动窗口来做, 判断每个窗口可以种多少花.
+[[id:1658b6c1-8bcf-4541-937a-0cf5a5b86862][849. Maximize Distance to Closest Person]], 和这题一样, 通过[[id:d772036b-0c07-45c4-b86c-ed519f603a00][滑动窗口]]来做, 判断每个窗口可以种多少花.
 
 并且为了方便计算, 还可以在两旁加上边界来减少对边界的判断
 
