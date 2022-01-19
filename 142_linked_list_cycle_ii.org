@@ -1,0 +1,95 @@
+:PROPERTIES:
+:ID:       1ae08683-5bca-4a9f-b61b-376a71fb605d
+:ROAM_REFS: https://leetcode.com/problems/linked-list-cycle-ii/
+:END:
+#+title: 142. Linked List Cycle II
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given the ~head~ of a linked list, return /the node where the cycle begins. If there is no cycle, return/ ~null~.
+
+There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the ~next~ pointer. Internally, ~pos~ is used to denote the index of the node that tail's ~next~ pointer is connected to (*0-indexed*). It is ~-1~ if there is no cycle. *Note that* ~pos~ *is not passed as a parameter*.
+
+*Do not modify* the linked list.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist.png]]
+#+BEGIN_SRC
+Input: head = [3,2,0,-4], pos = 1
+Output: tail connects to node index 1
+Explanation: There is a cycle in the linked list, where tail connects to the second node.
+#+END_SRC
+
+Example 2:
+
+[[https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test2.png]]
+#+BEGIN_SRC
+Input: head = [1,2], pos = 0
+Output: tail connects to node index 0
+Explanation: There is a cycle in the linked list, where tail connects to the first node.
+#+END_SRC
+
+Example 3:
+
+[[https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist_test3.png]]
+#+BEGIN_SRC
+Input: head = [1], pos = -1
+Output: no cycle
+Explanation: There is no cycle in the linked list.
+#+END_SRC
+
+*Constraints:*
+
+- The number of the nodes in the list is in the range ~[0, 10^{4}]~.
+- ~-10^{5} <= Node.val <= 10^{5}~
+- ~pos~ is ~-1~ or a *valid index* in the linked-list.
+
+*Follow up:* Can you solve it using ~O(1)~ (i.e. constant) memory?
+
+
+* 思路
+本题也算是一种新题型, 是[[id:b8126a7d-afb3-4a1d-ba93-fcf69b15f747][快慢指针]], 仔细想想, 其实[[id:1658b6c1-8bcf-4541-937a-0cf5a5b86862][849. Maximize Distance to Closest Person]], [[id:9c3e9fa2-4225-4315-b88f-742852bd5d95][605. Can Place Flowers]], 并不是滑动窗口, 而是快慢指针. 只不过我用快慢指针当作了滑动窗口而已
+
+但这题是真正的快慢指针, 一个一次走两步, 另一个一次走一步. 如果二者相遇, 则说明这个[[id:2dac612c-48d9-4fe9-9d0b-c5421d26dff2][链表]]中存在[[id:f5aa22b4-373f-4104-9796-6074f3d758ac][环]]. 很好理解, 但没做过就是想不到 QAQ
+
+但本题还需要注意的是它不止需要判断是否成环, 还需要判断环的起点.
+
+这需要一点数学知识: 在 =1 -> 2 -> 3 -> 4 -> 2 -> 3 -> 4 -> ...= 该环中, 快慢指针的第一次相遇是在 =3= 的位置
+
+快指针走了 =1 -> 2 -> 3 -> 4 -> 2 -> 3=, 慢指针走了 =1 -> 2 -> 3=
+
+我们把链表起点到环起点的距离称为 =x1=, 即上述示例中的 =1=,
+环起点到第一次相遇的位置称为 =x2=, 即上述示例中的 =2 -> 3=,
+第一次相遇的位置再到环起点称为 =x3=, 即上述示例中的 =4=
+
+那么, 快指针走的距离为 =x1 + x2 + x3 + x2=, 慢指针走的距离为 =x1 + x2=. 并且由于快指针的速度是慢指针的 2 倍, 因此 =x1 + x2 + x3 + x2 = 2(x1 + x2)=, 即 =x1 = x3=
+
+那么, 只要让慢指针再从起点开始, 快指针从第一次相遇点开始, 以同样的速度行走(1x). 那么它们再一次相遇的地点即为环的起点
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func detectCycle(head *ListNode) *ListNode {
+    fast, slow := head, head
+    for fast != nil && fast.Next != nil {
+        fast = fast.Next.Next
+        slow = slow.Next
+        if fast == slow {
+            slow = head
+            for slow != fast {
+                slow = slow.Next
+                fast = fast.Next
+            }
+            return slow
+        }
+    }
+    return nil
+}
+#+END_SRC
