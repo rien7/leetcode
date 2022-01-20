@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID:       e6b75910-ba72-4105-9d36-b36f908e31a7
+:ROAM_REFS: https://leetcode.com/problems/koko-eating-bananas/submissions/
+:END:
+#+title: 875. Koko Eating Bananas
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Koko loves to eat bananas. There are ~n~ piles of bananas, the ~i^{th}~ pile has ~piles[i]~ bananas. The guards have gone and will come back in ~h~ hours.
+
+Koko can decide her bananas-per-hour eating speed of ~k~. Each hour, she chooses some pile of bananas and eats ~k~ bananas from that pile. If the pile has less than ~k~ bananas, she eats all of them instead and will not eat any more bananas during this hour.
+
+Koko likes to eat slowly but still wants to finish eating all the bananas before the guards return.
+
+Return /the minimum integer/ ~k~ /such that she can eat all the bananas within/ ~h~ /hours/.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: piles = [3,6,7,11], h = 8
+Output: 4
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: piles = [30,11,23,4,20], h = 5
+Output: 30
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: piles = [30,11,23,4,20], h = 6
+Output: 23
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= piles.length <= 10^{4}~
+- ~piles.length <= h <= 10^{9}~
+- ~1 <= piles[i] <= 10^{9}~
+
+* 思路
+今天的题目比较艰难, 难点在于如何把向上取整的式子逆向求出 k 的值.
+
+不行的话只能遍历查找. 这时候可以使用 [[id:4aed115b-cad2-4d38-bb15-e44fed85c84a][二分查找]]
+
+* 代码
+#+BEGIN_SRC go
+// pileHour = piles[i] / k + (piles % k == 0 ? 0 : 1)
+// sum(pileHour) <= h
+func minEatingSpeed(piles []int, h int) int {
+    max := 1000000000
+    min := 1
+
+    // BINARY SEARCH
+    for min < max {
+        mid := min + (max - min) / 2
+        if canFinish(mid, h, piles) {
+            max = mid
+        } else {
+            min = mid + 1
+        }
+    }
+    return min
+}
+​
+func canFinish(k, h int, piles []int) bool {
+    sum := 0
+    for _, p := range piles {
+        sum += int(math.Ceil(float64(p) / float64(k)))
+        if sum > h {
+            return false
+        }
+    }
+    return true
+}
+#+END_SRC
