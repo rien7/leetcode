@@ -1,0 +1,60 @@
+:PROPERTIES:
+:ID:       84700d8b-758a-4c80-a720-b82167b16cee
+:ROAM_REFS: https://leetcode.com/problems/sequential-digits/
+:END:
+#+title: 1291. Sequential Digits
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Aninteger has /sequential digits/ if and only if each digit in the number is one more than the previous digit.
+
+Return a *sorted* list of all the integersin the range ~[low, high]~ inclusive that have sequential digits.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: low = 100, high = 300
+Output: [123,234]
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: low = 1000, high = 13000
+Output: [1234,2345,3456,4567,5678,6789,12345]
+#+END_SRC
+
+*Constraints:*
+
+- ~10 <= low <= high <= 10^9~
+
+* 思路
+本题主要是要思考如何生成 "序列数". 如果遍历每一个数字, 再判断这个数是否为序列数容易超时.
+
+因此, 可以直接生成序列数, 将符合范围要求的数字进行记录, 或者在范围内生成序列数. 这两种方法差不多, 后者会更为复杂.
+
+* 代码
+#+BEGIN_SRC go
+func sequentialDigits(low int, high int) []int {
+    nums := make([]int,0)
+    for l := 2; l <= 9; l++ {
+        for s := 1; s <= 10 - l; s++ {
+            num := 0
+            for i := 0; i < l; i++ {
+                num += (s + i) * pow(l - i - 1)
+            }
+            if num < low || num > high { continue }
+            nums = append(nums, num)
+        }
+    }
+    return nums
+}
+​
+func pow(n int) int {
+    num := 1
+    for i := 0; i < n; i++ {
+        num *= 10
+    }
+    return num
+}
+#+END_SRC
