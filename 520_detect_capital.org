@@ -1,0 +1,61 @@
+:PROPERTIES:
+:ID:       0348a3bd-61f4-4ebe-a027-0a7204e1f93f
+:ROAM_REFS: https://leetcode.com/problems/detect-capital/submissions/
+:END:
+#+title: 520. Detect Capital
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+We define the usage of capitals in a word to be right when one of the following cases holds:
+
+- All letters in this word are capitals, like ~"USA"~.
+- All letters in this word are not capitals, like ~"leetcode"~.
+- Only the first letter in this word is capital, like ~"Google"~.
+
+Given a string ~word~, return ~true~ if the usage of capitals in it is right.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: word = "USA"
+Output: true
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: word = "FlaG"
+Output: false
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= word.length <= 100~
+- ~word~ consists of lowercase and uppercase English letters.
+
+* 思路
+这题应该是这段时间以来最简单的一题了, 主要判断前两个字母的大小写关系, 根据这一关系使用不同的判断策略
+
+* 代码
+#+BEGIN_SRC go
+func detectCapitalUse(word string) bool {
+    if len(word) == 1 { return true }
+    fstCap, secCap := false, false
+    if word[0] <= 90 { fstCap = true }
+    if word[1] <= 90 { secCap = true }
+    if !fstCap && secCap { return false }
+    switch {
+    case fstCap && secCap:
+        for _, w := range word[2:] {
+            if w > 90 { return false }
+        }
+        return true
+    case (fstCap && !secCap) || (!fstCap && !secCap):
+        for _, w := range word[2:] {
+            if w <= 90 { return false }
+        }
+        return true
+    }
+    return false
+}
+#+END_SRC
