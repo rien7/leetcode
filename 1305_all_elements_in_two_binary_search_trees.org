@@ -1,0 +1,90 @@
+:PROPERTIES:
+:ID:       e18e158e-0cca-4087-80d1-cf1f13a27304
+:ROAM_REFS: https://leetcode.com/problems/all-elements-in-two-binary-search-trees/submissions/
+:END:
+#+title: 1305. All Elements in Two Binary Search Trees
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given two binary search trees ~root1~ and ~root2~, return /a list containing all the integers from both trees sorted in *ascending* order/.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2019/12/18/q2-e1.png]]
+#+BEGIN_SRC
+Input: root1 = [2,1,4], root2 = [1,0,3]
+Output: [0,1,1,2,3,4]
+#+END_SRC
+
+Example 2:
+
+[[https://assets.leetcode.com/uploads/2019/12/18/q2-e5-.png]]
+#+BEGIN_SRC
+Input: root1 = [1,null,8], root2 = [8,1]
+Output: [1,1,8,8]
+#+END_SRC
+
+*Constraints:*
+
+- The number of nodes in each tree is in the range ~[0, 5000]~.
+- ~-10^{5} <= Node.val <= 10^{5}~
+
+* 思路
+这一题只要明白[[id:5dc78c1a-2924-4f6c-99f8-100238a76d0a][二叉搜索树]]的性质就能很好解题.
+
+但是其实这种情况也可以使用递归来生成数组, 而不用使用非递归的方式.
+
+并且在 ~append~ 的过程中, append 生成新数组的消耗比较大, 尽量少用
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func getAllElements(root1 *TreeNode, root2 *TreeNode) []int {
+    var arr1 []int
+    var arr2 []int
+    inorder(root1, &arr1)
+    inorder(root2, &arr2)
+
+    if len(arr1) == 0 {
+        return arr2
+    } else if len(arr2) == 0 {
+        return arr1
+    }
+
+    var res []int
+
+    i, j := 0, 0
+    for i < len(arr1) || j < len(arr2) {
+        if i == len(arr1) {
+            res = append(res, arr2[j:]...)
+            break
+        }
+        if j == len(arr2) {
+            res = append(res, arr1[i:]...)
+            break
+        }
+        if arr1[i] > arr2[j] {
+            res = append(res, arr2[j])
+            j++
+        } else {
+            res = append(res, arr1[i])
+            i++
+        }
+    }
+    return res
+}
+​
+func inorder(node *TreeNode, res *[]int) {
+    if node == nil { return }
+    inorder(node.Left, res)
+    *res = append(*res, node.Val)
+    inorder(node.Right, res)
+}
+#+END_SRC
