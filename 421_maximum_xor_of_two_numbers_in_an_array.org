@@ -1,0 +1,95 @@
+:PROPERTIES:
+:ID:       fe7c3764-b292-4355-9a35-7cbe14c46083
+:ROAM_REFS: https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/
+:END:
+#+title: 421. Maximum XOR of Two Numbers in an Array
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given an integer array ~nums~, return /the maximum result of/ ~nums[i] XOR nums[j]~, where ~0 <= i <= j < n~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: nums = [3,10,5,25,2,8]
+Output: 28
+Explanation: The maximum result is 5 XOR 25 = 28.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [14,70,53,83,49,91,36,80,92,51,66,70]
+Output: 127
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= nums.length <= 2 * 10^{5}~
+- ~0 <= nums[i] <= 2^{31} - 1~
+
+* 思路
+本次的题目比较麻烦, 异或的概念为: "相同为0, 不同为1", 在 go 中可以使用 ~^~ 来表示.
+
+但显然, 使用两个循环来一一比较的方式时间复杂度较高, 容易超时.
+
+因此, 需要使用[[id:f726cb07-4eb9-4f05-8e62-c0986112e017][字典树]]的方式来存储每一个数字的每一位, 再通过一定的方式找出最大的异或值.
+
+** 例子
+对于 ~3, 10, 5, 25, 2, 8~ 来说, 它们的字典树为
+
+#+begin_src
+          0/         \1
+    0/         \1     \1
+  0/  \1      0/      /0
+  1\  0/    0/  \1   /0
+ 0/  \1 \1 0/  /0    \1
+ 2    3  5 8  10     25
+#+end_src
+
+要找到最大的异或值, 只要看有最大的不同位即可, 即:
+
+- 对于 2 来说, 25 和它的差距最大, 差值为27
+- 对于 25 来说, 5 和它差距最大, 差值为 28
+
+* 代码
+#+BEGIN_SRC go
+type Trie struct {
+    child [2]*Trie
+}
+​
+func findMaximumXOR(nums []int) int {
+    root := &Trie{}
+
+    for _, num := range nums {
+        cur := root
+        for i := 31; i >= 0; i-- {
+            bit := num >> i & 1
+            if cur.child[bit] == nil {
+                cur.child[bit] = &Trie{}
+            }
+            cur = cur.child[bit]
+        }
+    }
+
+    max := 0
+
+    for _, num := range nums {
+        sum := 0
+        cur := root
+        for i := 31; i >= 0; i-- {
+            bit := num >> i & 1
+            if cur.child[bit^1] != nil {
+                sum += 1 << i
+                cur = cur.child[bit^1]
+            } else {
+                cur = cur.child[bit]
+            }
+        }
+        if sum > max {
+             max = sum
+        }
+    }
+    return max
+}
+#+END_SRC
