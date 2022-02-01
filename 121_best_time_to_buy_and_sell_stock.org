@@ -1,0 +1,63 @@
+:PROPERTIES:
+:ID:       945bd9ce-ab69-435f-a2d8-eb0def0304a5
+:ROAM_REFS: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+:END:
+#+title: 121. Best Time to Buy and Sell Stock
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+You are given an array ~prices~ where ~prices[i]~ is the price of a given stock on the ~i^{th}~ day.
+
+You want to maximize your profit by choosing a *single day* to buy one stock and choosing a *different day in the future* to sell that stock.
+
+Return /the maximum profit you can achieve from this transaction/. If you cannot achieve any profit, return ~0~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: prices = [7,1,5,3,6,4]
+Output: 5
+Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: prices = [7,6,4,3,1]
+Output: 0
+Explanation: In this case, no transactions are done and the max profit = 0.
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= prices.length <= 10^{5}~
+- ~0 <= prices[i] <= 10^{4}~
+
+* 思路
+这道题目大概是 ~在 O(n) 条件下找最差值~ 的最简单的题目, 这类题目通常让你找两个位置之间的大小关系.
+
+当然 ~O(n^2)~ 的情况下使用两个嵌套的循环可以轻松的解决这一类题目, 但时间复杂度就比较高.
+
+这一类题目的解题点在于明白结果如何随位置变化, 以本题来说:
+
+1. 最值由一个数作为最小值和其后面的数作为最大值来组成, 需要求的是它们的差值.
+2. 要想差值 ~(res = a - b)~ 最大, 那么需要 a 越大越好, b 越小越好.
+3. 那么在 b 以后遇到比 b 小的数的时候, 可以毫不犹豫的替换 b, 因为 b 越小越好
+4. 遇到比 b 大的时候, 需要判断当前的差值是否最大, 以此决定是否保留结果
+
+* 代码
+#+BEGIN_SRC go
+func maxProfit(prices []int) int {
+    min := 10001
+    max := 0
+    for _, p := range prices {
+        if p < min {
+            min = p
+        } else if p - min > max {
+            max = p - min
+        }
+    }
+    return max
+}
+#+END_SRC
