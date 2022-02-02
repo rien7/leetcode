@@ -1,0 +1,79 @@
+:PROPERTIES:
+:ID:       ee0dd5ef-38e2-4d66-9101-1cc67759c60d
+:ROAM_REFS: https://leetcode.com/problems/find-all-anagrams-in-a-string/submissions/
+:END:
+#+title: 438. Find All Anagrams in a String
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given two strings ~s~ and ~p~, return /an array of all the start indices of/ ~p~ /'s anagrams in/ ~s~. You may return the answer in *any order*.
+
+An *Anagram* is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: s = "cbaebabacd", p = "abc"
+Output: [0,6]
+Explanation:
+The substring with start index = 0 is "cba", which is an anagram of "abc".
+The substring with start index = 6 is "bac", which is an anagram of "abc".
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: s = "abab", p = "ab"
+Output: [0,1,2]
+Explanation:
+The substring with start index = 0 is "ab", which is an anagram of "ab".
+The substring with start index = 1 is "ba", which is an anagram of "ab".
+The substring with start index = 2 is "ab", which is an anagram of "ab".
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= s.length, p.length <= 3 * 10^{4}~
+- ~s~ and ~p~ consist of lowercase English letters.
+
+* 思路
+本题是一道经典的[[id:d772036b-0c07-45c4-b86c-ed519f603a00][滑动窗口]]的题目, 窗口内表示的是当前各字母的个数(这里可以用 ~map~, 但是用 ~[26]int~ 更加高效).
+
+出去的字母--, 进入的字母++. 比较当前窗口和需要的窗口是否相等即可, 注意窗口的边界计算.
+
+* 代码
+#+BEGIN_SRC go
+type Set [26]int
+​
+func (s *Set) add(r byte) {
+    s[int(r-97)]++
+}
+​
+func (s *Set) remove(r byte) {
+    s[int(r-97)]--
+}
+​
+func buildSet(str string) (set Set) {
+    for i := range str { set.add(str[i]) }
+    return
+}
+​
+func findAnagrams(s string, p string) []int {
+    a,b := len(s), len(p)
+    res := make([]int, 0)
+    if b > a { return res }
+
+    need, have := buildSet(p), buildSet(s[:b])
+
+    start, end := 0, b-1
+
+    for end < a {
+        if have == need { res = append(res, start) }
+        have.remove(s[start])
+        start++
+        end++
+        if end < a { have.add(s[end]) }
+    }
+    return res
+}
+#+END_SRC
