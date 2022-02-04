@@ -1,0 +1,65 @@
+:PROPERTIES:
+:ID:       7ab7a901-cc9d-4701-b3c4-308be0ba2722
+:ROAM_REFS: https://leetcode.com/problems/contiguous-array/submissions/
+:END:
+#+title: 525. Contiguous Array
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given a binary array ~nums~, return /the maximum length of a contiguous subarray with an equal number of/ ~0~ and ~1~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: nums = [0,1]
+Output: 2
+Explanation: [0, 1] is the longest contiguous subarray with an equal number of 0 and 1.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= nums.length <= 10^{5}~
+- ~nums[i]~ is either ~0~ or ~1~.
+
+* 思路
+今天的题目比较的少做, 这题的解题思路为: 相同的 ~0-1~ 差可以视作一个子串, 因为相同 ~0-1~ 差代表这中间的值的 0 和 1 的个数相等.
+
+因此, 需要一个结构来存储不同的 ~0-1~ 差值, 并且由于我们只需要最大的子串长度, 因此只需要记录第一个不同的 ~0-1~ 差值即可.
+
+其次, ~0-1~ 差值可以使用一个 ~sum~ 变量来记录, 遇到 0 的时候 ~sum -= 1~, 遇到 1 的时候 ~sum += 1~. 那么既可以保证不同的 0-1 差都被记录.
+
+* 代码
+#+BEGIN_SRC go
+func findMaxLength(nums []int) int {
+    sum, max := 0, 0
+    // first idx of every sum
+    arr := make([]int, len(nums)*2+1)
+    for i := range arr {
+        arr[i] = -2
+    }
+    arr[len(nums)] = -1
+    for i, v := range nums {
+        if v == 0 {
+            sum--
+        } else {
+            sum++
+        }
+        if arr[sum+len(nums)] >= -1 {
+            if max < i - arr[sum+len(nums)] {
+                max = i - arr[sum+len(nums)]
+            }
+        } else {
+            arr[sum+len(nums)] = i
+        }
+    }
+    return max
+}
+#+END_SRC
