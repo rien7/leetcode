@@ -1,0 +1,84 @@
+:PROPERTIES:
+:ID:       277e5aa4-a31b-46fd-83b8-e570ebc194cb
+:ROAM_REFS: https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/submissions/
+:END:
+#+title: 80. Remove Duplicates from Sorted Array II
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given an integer array ~nums~ sorted in *non-decreasing order*, remove some duplicates [[https://en.wikipedia.org/wiki/In-place_algorithm][in-place]] such that each unique element appears *at most twice*. The *relative order* of the elements should be kept the *same*.
+
+Since it is impossible to change the length of the array in some languages, you must instead have the result be placed in the *first part* of the array ~nums~. More formally, if there are ~k~ elements after removing the duplicates, then the first ~k~ elements of ~nums~should hold the final result. It does not matter what you leave beyond the first~k~elements.
+
+Return ~k~ /after placing the final result in the first/ ~k~ /slots of/ ~nums~.
+
+Do *not* allocate extra space for another array. You must do this by *modifying the input array* [[https://en.wikipedia.org/wiki/In-place_algorithm][in-place]] with O(1) extra memory.
+
+*Custom Judge:*
+
+The judge will test your solution with the following code:
+
+#+BEGIN_SRC
+int[] nums = [...]; // Input array
+int[] expectedNums = [...]; // The expected answer with correct length
+
+int k = removeDuplicates(nums); // Calls your implementation
+
+assert k == expectedNums.length;
+for (int i = 0; i < k; i++) {
+    assert nums[i] == expectedNums[i];
+}
+#+END_SRC
+
+If all assertions pass, then your solution will be accepted.
+
+Example 1:
+
+#+BEGIN_SRC
+Input: nums = [1,1,1,2,2,3]
+Output: 5, nums = [1,1,2,2,3,_]
+Explanation: Your function should return k = 5, with the first five elements of nums being 1, 1, 2, 2 and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [0,0,1,1,1,1,2,3,3]
+Output: 7, nums = [0,0,1,1,2,3,3,_,_]
+Explanation: Your function should return k = 7, with the first seven elements of nums being 0, 0, 1, 1, 2, 3 and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= nums.length <= 3 * 10^{4}~
+- ~-10^{4} <= nums[i] <= 10^{4}~
+- ~nums~ is sorted in *non-decreasing* order.
+
+* 思路
+本题的关键在于阅读题目, 题目的关键信息有两个:
+1. 非单调递减(1,2,3,3,4)
+2. 就地修改
+
+由于条件 1 的限制, 我们不再需要 map 来存储每一个数字的次数, 由于相同的数字必然相连, 因此只需要在数字变更时重置 ~count~ 即可
+
+条件 2 的限制则让我们不能创建新的数组来保存数据, 而是需要记录有效数字的下标, 在合适的时候进行修改
+
+* 代码
+#+BEGIN_SRC go
+func removeDuplicates(nums []int) int {
+    i, count := 0, 0
+    for j, num := range nums {
+        if j > 0 && nums[j-1] != num {
+            count = 0
+        }
+        if count < 2 {
+            nums[i] = num
+            i++
+            count++
+        }
+    }
+    return i
+}
+#+END_SRC
