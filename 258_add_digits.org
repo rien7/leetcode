@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID:       965dd807-ea51-4ed4-90d2-35199c2affa6
+:ROAM_REFS: https://leetcode.com/problems/add-digits/
+:END:
+#+title: 258. Add Digits
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given an integer ~num~, repeatedly add all its digits until the result has only one digit, and return it.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: num = 38
+Output: 2
+Explanation: The process is
+38 --> 3 + 8 --> 11
+11 --> 1 + 1 --> 2
+Since 2 has only one digit, return it.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: num = 0
+Output: 0
+#+END_SRC
+
+*Constraints:*
+
+- ~0 <= num <= 2^{31} - 1~
+
+*Follow up:* Could you do it without any loop/recursion in ~O(1)~ runtime?
+
+
+* 思路
+这题实际上是一个数学问题, 常规的解题思路非常简单, 不断取余取模直到最后只剩一个数.
+
+另一种方法则是通过观察一些数字, 可以发现
+| 1 | 10 | 19 | 28 | 37 | 46 | 55 | 64 | 73 | 82 | 91 |
+| 2 | 11 | 20 | 29 | 38 | 47 | 56 | 65 | 74 | 83 | 92 |
+| 3 | 12 | 21 | 30 | 39 | 48 | 57 | 66 | 75 | 84 | 93 |
+| 4 | 13 | 22 | 31 | 40 | 49 | 58 | 67 | 76 | 85 | 94 |
+| 5 | 14 | 23 | 32 | 41 | 50 | 59 | 68 | 77 | 86 | 95 |
+| 6 | 15 | 24 | 33 | 42 | 51 | 60 | 69 | 78 | 87 | 96 |
+| 7 | 16 | 25 | 34 | 43 | 52 | 61 | 70 | 79 | 88 | 97 |
+| 8 | 17 | 26 | 35 | 44 | 53 | 62 | 71 | 80 | 89 | 98 |
+| 9 | 18 | 27 | 36 | 45 | 54 | 63 | 72 | 81 | 90 | 99 |
+#+TBLFM: @1$1..@9$11=($#-1)*9-(9-@#)
+
+~num % 9~ 的值即为其各个位数的数字最终和, 特殊情况为 ~num % 9 = 0~ 的时候, 余数其实为 9, 而 ~num = 0~ 的时候, 余数其实为 0
+
+* 代码
+#+BEGIN_SRC go
+// 思路1
+func addDigits(num int) int {
+    for {
+        sum := 0
+        for m, n := num, 0; m > 0; {
+            m, n = m / 10, m % 10
+            sum += n
+        }
+        if sum / 10 == 0 {
+            return sum
+        }
+        num = sum
+    }
+}
+// 思路2
+func addDigits(num int) int {
+    return 1 + (num - 1) % 9;
+}
+#+END_SRC
