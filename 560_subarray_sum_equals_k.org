@@ -1,0 +1,57 @@
+:PROPERTIES:
+:ID:       7106b0b8-6cd3-4f82-b9fd-c872d4c91f48
+:ROAM_REFS: https://leetcode.com/problems/subarray-sum-equals-k/submissions/
+:END:
+#+title: 560. Subarray Sum Equals K
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given an array of integers ~nums~ and an integer ~k~, return /the total number of continuous subarrays whose sum equals to/ ~k~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: nums = [1,1,1], k = 2
+Output: 2
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [1,2,3], k = 3
+Output: 2
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= nums.length <= 2 * 10^{4}~
+- ~-1000 <= nums[i] <= 1000~
+- ~-10^{7} <= k <= 10^{7}~
+
+* 思路
+这题还是稍微复杂了一点, 由于负数的出现, 这一题不能使用滑动窗口来做.
+
+因此, 需要一种新的记录方式来判断这一子串的和为多少.
+
+这里使用"累计和"的方法, 例如: ~3,4,7,2,-3,1,4,2~ 的累计和为: ~0, 3,7,14,16,13,14,18,20~ (一开始的 0 为初始化项)
+
+那么如果某两个累计和之间的差为 k, 那么可以说明这两个累计和之间的子串的和就是 k. 例如: (~0-7, 7-14, 7-14, 13-20~), 因此有 4 项和为 k 的子串.
+
+要便捷的查询任意两个累计和的差, 只需要使用 ~map[sum-k]~, 看结果是否存在即可, 哈希表的键为 sum 出现的次数.
+
+* 代码
+#+BEGIN_SRC go
+func subarraySum(nums []int, k int) int {
+    res, sum := 0, 0
+    m := make(map[int]int, 0)
+    m[0] = 1
+    for _, num := range nums {
+        sum += num
+        if m[sum-k] > 0 {
+            res += m[sum-k]
+        }
+        m[sum]++
+    }
+    return res
+}
+#+END_SRC
