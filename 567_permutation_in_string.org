@@ -1,0 +1,63 @@
+:PROPERTIES:
+:ID:       5fff7d3b-8335-456b-8e92-300c0d47b224
+:ROAM_REFS: https://leetcode.com/problems/permutation-in-string/submissions/
+:END:
+#+title: 567. Permutation in String
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given two strings ~s1~ and ~s2~, return ~true~ /if/ ~s2~ /contains a permutation of/ ~s1~ /, or/ ~false~ /otherwise/.
+
+In other words, return ~true~ if one of ~s1~'s permutations is the substring of ~s2~.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: s1 = "ab", s2 = "eidbaooo"
+Output: true
+Explanation: s2 contains one permutation of s1 ("ba").
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: s1 = "ab", s2 = "eidboaoo"
+Output: false
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= s1.length, s2.length <= 10^{4}~
+- ~s1~ and ~s2~ consist of lowercase English letters.
+
+* 思路
+这题也是比较经典的[[id:d772036b-0c07-45c4-b86c-ed519f603a00][滑动窗口]]的题目, 判断是否相等的时候既可以判断是否为0也可以(创建结构体)判断两个窗口是否相等
+
+* 代码
+#+BEGIN_SRC go
+func checkInclusion(s1 string, s2 string) bool {
+    n1, n2 := len(s1), len(s2)
+    if n1 > n2 { return false }
+    m := make([]int, 26)
+    for _, s := range s1 {
+        m[s-97]++
+    }
+    for i := 0; i < n1; i++ {
+        m[byte(s2[i])-97]--
+    }
+    for i := n1; i < n2; i++ {
+        if checkAllZero(&m) { return true }
+        m[byte(s2[i])-97]--
+        m[byte(s2[i-n1])-97]++
+    }
+    if checkAllZero(&m) { return true }
+    return false
+}
+​
+func checkAllZero(ms *[]int) bool {
+    for _, m := range *ms {
+        if m != 0 { return false }
+    }
+    return true
+}
+#+END_SRC
