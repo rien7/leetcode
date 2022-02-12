@@ -1,0 +1,144 @@
+:PROPERTIES:
+:ID:       40f4ed70-276c-4b56-bc18-e5114d33b88a
+:ROAM_REFS: https://leetcode.com/problems/word-ladder/submissions/
+:END:
+#+title: 127. Word Ladder
+#+filetags: :Hard:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+A *transformation sequence* from word ~beginWord~ to word ~endWord~ using a dictionary ~wordList~ is a sequence of words ~beginWord -> s_{1} -> s_{2} -> ... -> s_{k}~ such that:
+
+- Every adjacent pair of words differs by a single letter.
+- Every ~s_{i}~ for ~1 <= i <= k~ is in ~wordList~. Note that ~beginWord~ does not need to be in ~wordList~.
+- ~s_{k} == endWord~
+
+Given two words, ~beginWord~ and ~endWord~, and a dictionary ~wordList~, return /the *number of words* in the *shortest transformation sequence* from/ ~beginWord~ /to/ ~endWord~, or ~0~ /if no such sequence exists./
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+Output: 5
+Explanation: One shortest transformation sequence is "hit" -> "hot" -> "dot" -> "dog" -> cog", which is 5 words long.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+Output: 0
+Explanation: The endWord "cog" is not in wordList, therefore there is no valid transformation sequence.
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= beginWord.length <= 10~
+- ~endWord.length == beginWord.length~
+- ~1 <= wordList.length <= 5000~
+- ~wordList[i].length == beginWord.length~
+- ~beginWord~, ~endWord~, and ~wordList[i]~ consist of lowercase English letters.
+- ~beginWord != endWord~
+- All the words in ~wordList~ are *unique*.
+
+* 思路
+这题倒不能说特别困难, 这种查找一般都是通过 [[id:a1949000-3197-4508-902e-5e26a7877e1e][BFS]] 来做, 麻烦的是如何进行优化.
+
+在没有进行优化的代码中, 基本逻辑为: 查找与当前但是距离为 1 的词, 放入队列中, 遍历直到队列为空.
+
+这个方法比较传统, 存在一些优化方法, 例如: 如何查找距离为 1 的单词, 如何记录以遍历的单词等等.
+
+现在这种方法使用的是[[id:048d8e50-98bb-4017-9d39-ae1fa5ce09af][哈希表]]来进行存储记录, 键是不同的单词, 值为 ~true~
+
+查找距离为 1 的单词的方法为遍历所有可能的情况, 看单词是否存在于 ~wordList~ 中
+
+** 进一步的优化:
+由于我们要查找的是与 ~endWord~ 距离为 1 的单词, 因此无论是从 ~queue~ 出发还是从 ~endList~ 出发, 结果都一样.
+
+因此可以通过交换 ~queue~ 和 ~endList~, 遍历小的哈希表, 来加快查找速度
+
+* 代码
+#+BEGIN_SRC go
+// BFS
+func ladderLength(beginWord string, endWord string, wordList []string) int {
+    inList := false
+    for _, w := range wordList {
+        if w == endWord {
+            inList = true
+            break
+        }
+    }
+    if !inList { return 0 }
+    return bfs(endWord, wordList, []string{beginWord}, 1)
+}
+
+func bfs(end string, wordList, queue []string, depth int) int {
+    for _, str := range queue {
+        queue = queue[1:]
+        if compareWord(end, str) { return depth + 1 }
+        for i, w := range wordList {
+            if compareWord(w, str) {
+                queue = append(queue, w)
+                wordList = deleteI(wordList, i)
+            }
+        }
+    }
+    if len(queue) == 0 { return 0 }
+    return bfs(end, wordList, queue, depth+1)
+}
+
+func deleteI(wordList []string, i int) []string {
+    if i < len(wordList) - 1 {
+        return append(wordList[:i], wordList[i+1:]...)
+    } else {
+        return wordList[:i]
+    }
+}
+
+func compareWord(a, b string) bool {
+    num := 0
+    for i := range a {
+        if a[i] != b[i] {
+            num++
+            if num >= 2 { return false }
+        }
+    }
+    return true
+}
+// 优化
+func ladderLength(beginWord string, endWord string, wordList []string) int {
+    word := make(map[string]bool, 0)
+    for _, w := range wordList {
+        word[w] = true
+    }
+    if !word[endWord] { return 0 }
+    depth := 1
+    queue := map[string]bool{beginWord: true}
+    end := map[string]bool{endWord: true}
+    visited := map[string]bool{}
+    for len(queue) != 0 && len(end) != 0 {
+        if len(queue) > len(end) {
+            queue, end = end, queue
+        }
+        temp := make(map[string]bool, 0)
+        for str := range queue {
+            for i := 0; i < len(str); i++ {
+                w := []byte(str)
+                org := w[i]
+                for ch := byte('a'); ch <= 'z'; ch ++ {
+                    w[i] = ch
+                    cur := string(w)
+                    if end[cur] { return depth + 1 }
+                    if word[cur] && !visited[cur] {
+                        visited[cur] = true
+                        temp[cur] = true
+                    }
+                }
+                w[i] = org
+            }
+        }
+        depth++
+        queue = temp
+    }
+    return 0
+}
+#+END_SRC
