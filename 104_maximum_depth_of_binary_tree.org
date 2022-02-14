@@ -1,0 +1,59 @@
+:PROPERTIES:
+:ID:       637478ca-64fe-48e9-bd39-f0aebc1c66df
+:ROAM_REFS: https://leetcode.com/problems/maximum-depth-of-binary-tree/submissions/
+:END:
+#+title: 104. Maximum Depth of Binary Tree
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given the ~root~ of a binary tree, return /its maximum depth/.
+
+A binary tree's *maximum depth* is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2020/11/26/tmp-tree.jpg]]
+#+BEGIN_SRC
+Input: root = [3,9,20,null,null,15,7]
+Output: 3
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: root = [1,null,2]
+Output: 2
+#+END_SRC
+
+*Constraints:*
+
+- The number of nodes in the tree is in the range ~[0, 10^{4}]~.
+- ~-100 <= Node.val <= 100~
+
+* 思路
+基本的层次遍历
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+func maxDepth(root *TreeNode) int {
+    queue := []*TreeNode{root}
+    depth := 0
+    for root != nil && len(queue) != 0 {
+        depth++
+        for _, node := range queue {
+            queue = queue[1:]
+            if node.Left != nil { queue = append(queue, node.Left) }
+            if node.Right != nil { queue = append(queue, node.Right) }
+        }
+    }
+    return depth
+}
+#+END_SRC
