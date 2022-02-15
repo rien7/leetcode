@@ -1,0 +1,61 @@
+:PROPERTIES:
+:ID:       3d885739-27ca-4cbd-8544-5d9a27dd3b3d
+:ROAM_REFS: https://leetcode.com/problems/single-number/submissions/
+:END:
+#+title: 136. Single Number
+#+filetags: :Easy:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given a *non-empty* array of integers ~nums~, every element appears /twice/ except for one. Find that single one.
+
+You mustimplement a solution with a linear runtime complexity and useonly constantextra space.
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: nums = [2,2,1]
+Output: 1
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [4,1,2,1,2]
+Output: 4
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: nums = [1]
+Output: 1
+#+END_SRC
+
+*Constraints:*
+
+- ~1 <= nums.length <= 3 * 10^{4}~
+- ~-3 * 10^{4} <= nums[i] <= 3 * 10^{4}~
+- Each element in the array appears twice except for one element which appears only once.
+
+* 思路
+这题不能使用[[id:048d8e50-98bb-4017-9d39-ae1fa5ce09af][哈希表]]来做, 因为这不符合常量级空间复杂度.
+
+需要使用[[id:8560fa73-e8cf-4def-9707-ab9789e14a1e][异或]]
+
+因为其具有以下几个性质:
+1. ~a ^ 0 = a~
+2. ~a ^ a = 0~
+3. ~a ^ b ^ b = a~
+
+因此, 在这题中可以使用异或的性质, 求出剩余的那一个值
+
+* 代码
+#+BEGIN_SRC go
+func singleNumber(nums []int) int {
+    res := 0
+    for _, num := range nums {
+        res ^= num
+    }
+    return res
+}
+#+END_SRC
