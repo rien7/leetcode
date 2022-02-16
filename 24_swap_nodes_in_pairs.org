@@ -1,0 +1,69 @@
+:PROPERTIES:
+:ID:       6964f1e3-3aa4-410b-9cea-2cc7a5434206
+:ROAM_REFS: https://leetcode.com/problems/swap-nodes-in-pairs/submissions/
+:END:
+#+title: 24. Swap Nodes in Pairs
+#+filetags: :Medium:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+Given alinked list, swap every two adjacent nodes and return its head. You must solve the problem withoutmodifying the values in the list's nodes (i.e., only nodes themselves may be changed.)
+
+*Example 1:*
+
+[[https://assets.leetcode.com/uploads/2020/10/03/swap_ex1.jpg]]
+#+BEGIN_SRC
+Input: head = [1,2,3,4]
+Output: [2,1,4,3]
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: head = []
+Output: []
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: head = [1]
+Output: [1]
+#+END_SRC
+
+*Constraints:*
+
+- The number of nodes in thelistis in the range ~[0, 100]~.
+- ~0 <= Node.val <= 100~
+
+* 思路
+交换两个节点的问题在于需要更改节点1上级的 next, 节点1的 next 以及 节点2的 next.
+
+因此在头节点前面增加一个 root 节点方便后续的代码编写.
+
+* 代码
+#+BEGIN_SRC go
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+func swapPairs(head *ListNode) *ListNode {
+    root := &ListNode{Next: head}
+    cur := root
+    for {
+        if cur.Next != nil && cur.Next.Next != nil {
+            next := cur.Next
+            nnext := cur.Next.Next
+            cur.Next = nnext
+            next.Next = nnext.Next
+            nnext.Next = next
+        } else {
+            break
+        }
+        cur = cur.Next.Next
+    }
+    return root.Next
+}
+#+END_SRC
