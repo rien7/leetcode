@@ -1,0 +1,108 @@
+:PROPERTIES:
+:ID:       e8cc96ba-7f72-438d-b19c-cfcee5807e0e
+:ROAM_REFS: https://leetcode.com/problems/minimize-deviation-in-array/submissions/
+:END:
+#+title: 1675. Minimize Deviation in Array
+#+filetags: :Hard:
+
+* [[id:2b2e3e1f-924b-43fe-a7f8-a1eb6482d2f2][问题]]
+You are given an array ~nums~ of ~n~ positive integers.
+
+You can perform two types of operations on any element of the array any number of times:
+
+- If the element is *even*, *divide* it by ~2~.
+    - For example, if the array is ~[1,2,3,4]~, then you can do this operation on the last element, and the array will be ~[1,2,3,2].~
+- If the element is *odd*, *multiply* it by ~2~.
+    - For example, if the array is ~[1,2,3,4]~, then you can do this operation on the first element, and the array will be ~[2,2,3,4].~
+
+The *deviation* of the array is the *maximum difference* between any two elements in the array.
+
+Return /the *minimum deviation* the array can have after performing some number of operations./
+
+*Example 1:*
+
+#+BEGIN_SRC
+Input: nums = [1,2,3,4]
+Output: 1
+Explanation: You can transform the array to [1,2,3,2], then to [2,2,3,2], then the deviation will be 3 - 2 = 1.
+#+END_SRC
+
+Example 2:
+
+#+BEGIN_SRC
+Input: nums = [4,1,5,20,3]
+Output: 3
+Explanation: You can transform the array after two operations to [4,2,5,5,3], then the deviation will be 5 - 2 = 3.
+#+END_SRC
+
+Example 3:
+
+#+BEGIN_SRC
+Input: nums = [2,10,8]
+Output: 3
+#+END_SRC
+
+*Constraints:*
+
+- ~n == nums.length~
+- ~2 <= n <= 10^{5}~
+- ~1 <= nums[i] <= 10^{9}~
+
+* 思路
+其实本题的核心在于对这两个操作的理解: 奇数可以 *2, 偶数可以 /2. 那么不妨将所有数字都化成偶数, 方便后续统一处理.
+
+在所有数字都变成了偶数以后, 问题就变成了 "找到最大最小值, 求它们的差. 再将最大值 /2, 再求最大最小值的差, 直到最大值为奇数(代表着无法继续减小)"
+
+那么如何快速找到最大最小值, 则成了本题的关键.
+
+这里使用的是[[id:1e6f4463-b013-4592-94d9-6fa8124421c5][堆排序]], 堆有一个比较好的性质就是不需要额外的数据结构, 在数组上就能操作.
+
+* 代码
+#+BEGIN_SRC go
+func minimumDeviation(nums []int) int {
+    res, min := 1 << 32, 1 << 32
+    n := len(nums)
+    for i:= range nums {
+        if nums[i] % 2 == 1 {
+            nums[i] *= 2
+        }
+        min = minimum(min, nums[i])
+    }
+    makeHeap(nums, n)
+    for nums[0] % 2 == 0 {
+        nums[0] /= 2
+        min = minimum(min, nums[0])
+        heap(nums, 0, n)
+        res = minimum(res, nums[0] - min)
+    }
+    return res
+}
+// generate heap
+func makeHeap(nums []int, n int) {
+    // 从最后一个父节点开始调整
+    for i := n / 2 - 1; i >= 0; i -- {
+        heap(nums, i, n)
+    }
+}
+// max heap
+func heap(nums []int, i, n int) {
+    l := i * 2 + 1
+    r := i * 2 + 2
+    f := i
+    if l < n && nums[l] > nums[f] {
+        f = l
+    }
+    if r < n && nums[r] > nums[f] {
+        f = r
+    }
+    if f != i {
+        nums[f], nums[i] = nums[i], nums[f]
+        heap(nums, f, n)
+    }
+}
+​
+func minimum(a, b int) int {
+    if a < b { return a }
+    return b
+}
+#+END_SRC
